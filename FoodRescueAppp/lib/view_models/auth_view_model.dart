@@ -50,5 +50,32 @@ class AuthViewModel extends ChangeNotifier{ // ChangeNotifier là lớp cơ sở
     _isLoading = false;// đặt lại trạng thái tải về false
     notifyListeners();// thông báo cho các widget lắng nghe thay đổi
     return false;
-  } 
+  }
+
+  // Hàm đăng nhập
+  Future<bool> login(String email, String password) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      // Gọi Firebase Auth để đăng nhập
+      await _firebaseAuth.signInWithEmailAndPassword(
+        email: email, 
+        password: password
+      );
+      
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } on FirebaseAuthException catch (e) {
+      _errorMessage = e.message;
+    } catch (e) {
+      _errorMessage = "Lỗi: ${e.toString()}";
+    }
+
+    _isLoading = false;
+    notifyListeners();
+    return false;
+  }
 }
